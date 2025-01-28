@@ -6,6 +6,7 @@ import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
 import usePlayer from "@/app/contexts/playerContext";
+import { useThemeColor } from "@/app/hooks/useThemeColor";
 
 export default function Recorder() {
     const [recording, setRecording] = useState<Audio.Recording | null>(null);
@@ -34,7 +35,6 @@ export default function Recorder() {
             try {
 
                 console.log("Requesting permissions..");
-                // await Audio.requestPermissionsAsync();
                 const { status } = await Audio.requestPermissionsAsync();
                 if (status !== "granted") {
                     alert("Permission to access microphone is required!");
@@ -62,15 +62,19 @@ export default function Recorder() {
             onPress={toggleRecording}
             style={({ pressed }) => [
                 {
-                    backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white'
-                },
-                {
+                    backgroundColor: pressed ? 'white' : 'transparent',
+                    borderColor: useThemeColor({}, 'icon'),
+                    borderWidth: 1,
                     padding: 10,
-                    borderRadius: 5,
-                }
+                    borderRadius: 100,
+                    width: 200,
+                    height: 200,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                },
             ]}
         >
-            <MaterialIcons size={28} name="mic" />
+            <MaterialIcons size={150} name="mic" color={'purple'} />
         </Pressable>
     )
 

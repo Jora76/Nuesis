@@ -18,7 +18,14 @@ export default function TabLayout() {
             position: 'absolute',
           },
           default: {
-            backgroundColor: Colors[colorScheme ?? 'light'].background,
+            backgroundColor: Colors[colorScheme ?? 'light'].tabIconDefault,
+            position: 'absolute',
+            // backgroundColor: 'blue',
+            borderRadius: 50,
+            borderTopWidth: 0,
+            width: '80%',
+            marginLeft: '10%',
+            marginBottom: 15,
           },
         }),
       }}>

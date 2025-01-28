@@ -24,8 +24,8 @@ export default function Player({ item }: PlayerProps) {
         }
     };
     return (
-        <View>
-            <Text>{item}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '50%' }}>
+            {/* <Text>{item}</Text> */}
             <Button title="Play" onPress={() => playRecording(`${FileSystem.documentDirectory}${item}`)} />
             <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
         </View>
