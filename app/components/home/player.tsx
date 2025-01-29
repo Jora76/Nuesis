@@ -3,7 +3,6 @@ import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 import usePlayer from "@/app/contexts/playerContext";
 
-
 interface PlayerProps {
     item: string;
 }
@@ -25,7 +24,6 @@ export default function Player({ item }: PlayerProps) {
     };
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '50%' }}>
-            {/* <Text>{item}</Text> */}
             <Button title="Play" onPress={() => playRecording(`${FileSystem.documentDirectory}${item}`)} />
             <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
         </View>
