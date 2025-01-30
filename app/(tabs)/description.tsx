@@ -1,17 +1,14 @@
-import { FlatList, View, StyleSheet, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 
-import Player from "../components/home/player";
+// import Player from "../components/home/player";
 import Resume from "../components/description/resume";
 import usePlayer from "../contexts/playerContext";
 import { useThemeColor } from "../hooks/useThemeColor";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Description() {
   const { recordings, loadRecordings } = usePlayer();
-  const [layout, setLayout] = useState({
-    width: 0,
-    height: 0,
-  });
 
   useEffect(() => {
     (async () => {
@@ -20,38 +17,23 @@ export default function Description() {
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: useThemeColor({}, "background"),
-      }}
-    >
-      <View
-        style={{ width: "100%", height: "80%" }}
-        onLayout={(event) => setLayout(event.nativeEvent.layout)}
+    <GestureHandlerRootView>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: useThemeColor({}, "background"),
+        }}
       >
         <FlatList
           data={recordings}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            // <Player item={item} />
             <Resume item={item} />
-          )
-          }
-          contentContainerStyle={styles.flatList}
-
+          )}
         />
-      </View>
-    </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  flatList: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-  }
-});

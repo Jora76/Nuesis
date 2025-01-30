@@ -12,7 +12,7 @@ export default function Resume({ item }: { item: string }) {
         if (itemState === 0) {
             toHeightValue = 40;
         } else if (itemState === 1) {
-            toHeightValue = 100;
+            toHeightValue = 250;
         } else {
             // Calculez la hauteur relative en pixels
             const screenHeight = Dimensions.get("window").height;
@@ -72,9 +72,7 @@ export default function Resume({ item }: { item: string }) {
     return (
         <Animated.View style={[styles.container, { height: heightAnim, minWidth: minWidthAnim }]}>
             <TouchableOpacity onPress={handlePress}>
-                {/* <View style={styles.container}> */}
-                    <Text style={styles.text}>RESUME 1</Text>
-                {/* </View> */}
+                <Text style={styles.text}>RESUME 1</Text>
             </TouchableOpacity>
         </Animated.View >
     );
