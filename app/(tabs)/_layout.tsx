@@ -20,7 +20,6 @@ export default function TabLayout() {
           default: {
             backgroundColor: Colors[colorScheme ?? 'light'].tabIconDefault,
             position: 'absolute',
-            // backgroundColor: 'blue',
             borderRadius: 50,
             borderTopWidth: 0,
             width: '80%',

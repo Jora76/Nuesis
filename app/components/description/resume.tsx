@@ -1,13 +1,18 @@
 import { useEffect, useState, useRef } from "react";
 import { useThemeColor } from "@/app/hooks/useThemeColor";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 
-export default function Resume({ item }: { item: string }) {
+export default function Resume({ item, index, scrollRef }: { item: any, index: number,  scrollRef: React.RefObject<FlatList> }) {
     const [itemState, setItemState] = useState(0);
     const heightAnim = useRef(new Animated.Value(40)).current; // Valeur animée pour la hauteur
     const minWidthAnim = useRef(new Animated.Value(0)).current; // Valeur animée pour la largeur
 
     useEffect(() => {
+        // scrollRef.current?.scrollToIndex({ animated: true, index });
+        const timeoutId = setTimeout(() => {
+            scrollRef.current?.scrollToIndex({ animated: true, index });
+          }, 100);
         let toHeightValue;
         if (itemState === 0) {
             toHeightValue = 40;
@@ -16,7 +21,7 @@ export default function Resume({ item }: { item: string }) {
         } else {
             // Calculez la hauteur relative en pixels
             const screenHeight = Dimensions.get("window").height;
-            toHeightValue = screenHeight * 0.80;
+            toHeightValue = screenHeight * 0.9;
         }
 
         let toWidthValue;
@@ -46,8 +51,6 @@ export default function Resume({ item }: { item: string }) {
             justifyContent: 'flex-start',
 
             padding: 5,
-            minWidth: itemState != 0 ? '90%' : '80%',
-            height: itemState == 2 ? '95%' : itemState == 1 ? 100 : 40,
 
             backgroundColor: useThemeColor({}, "tabIconDefault"),
 
