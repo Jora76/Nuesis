@@ -3,14 +3,14 @@ import { View, Button } from "react-native";
 import Slider from '@react-native-community/slider';
 
 import * as FileSystem from "expo-file-system";
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
+import { Audio } from "expo-av";
 // import * as ExponentAV from "expo-av/build/AV";
 
 import usePlayer from "@/app/contexts/playerContext";
 
 interface PlayerProps {
     item: string;
-} 
+}
 
 export default function Player({ item }: PlayerProps) {
     const { loadRecordings } = usePlayer();
@@ -23,9 +23,15 @@ export default function Player({ item }: PlayerProps) {
     const playRecording = async (uri: string) => {
         const { sound } = await Audio.Sound.createAsync({ uri });
         sound?.setOnPlaybackStatusUpdate((status) => onPlaybackStatusUpdate(status, sound));
+        await sound?.setPositionAsync(position);
         await sound?.playAsync();
         setSoundState(sound);
         setIsPlaying(true);
+    };
+
+    const pauseRecording = async () => {
+        await soundState?.pauseAsync();
+        setIsPlaying(false);
     };
 
     const onPlaybackStatusUpdate = async (status: any, sound: Audio.Sound) => {
@@ -34,6 +40,7 @@ export default function Player({ item }: PlayerProps) {
             setDuration(status.durationMillis);
             if (status.didJustFinish) {
                 setIsPlaying(false);
+                setPosition(0);
                 await sound?.unloadAsync();
                 console.log("Playback finished");
             }
@@ -51,7 +58,6 @@ export default function Player({ item }: PlayerProps) {
     const handleSliderChange = async (value: number) => {
         if (soundState && isSliderChanging) {
             await soundState?.setPositionAsync(value);
-            await soundState?.playFromPositionAsync(value);
         }
     };
     return (
@@ -65,7 +71,7 @@ export default function Player({ item }: PlayerProps) {
                 onTouchEnd={() => setIsSliderChanging(false)}
                 onValueChange={handleSliderChange}
             />
-            <Button title="Play" onPress={() => playRecording(`${FileSystem.documentDirectory}${item}`)} />
+            <Button title="Play" onPress={() => isPlaying ? pauseRecording() : playRecording(`${FileSystem.documentDirectory}${item}`)} />
             <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
         </View>
     )
