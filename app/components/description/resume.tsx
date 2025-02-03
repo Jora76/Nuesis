@@ -1,25 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
-import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
-// import AppLoading from 'expo-app-loading';
 
 import { useThemeColor } from "@/app/hooks/useThemeColor";
+import Player from "../home/player";
+import React from "react";
 
 export default function Resume({ item, index, scrollRef }: { item: any, index: number, scrollRef: React.RefObject<FlatList> }) {
     const [itemState, setItemState] = useState(0);
 
     const heightAnim = useRef(new Animated.Value(40)).current; // Valeur animée pour la hauteur
     const minWidthAnim = useRef(new Animated.Value(0)).current; // Valeur animée pour la largeur
-
-    // let [fontsLoaded] = useFonts({
-    //     Montserrat_400Regular,
-    //     Montserrat_700Bold,
-    // });
-
-    // if (!fontsLoaded) {
-    //     return <AppLoading />;
-    // }
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -98,11 +89,14 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
                 <Text style={styles.title}>RESUME 1</Text>
             </TouchableOpacity>
             {itemState > 0 &&
-                <View style={{ height: '85%', width: '100%', marginTop: 10 }}>
-                    <ScrollView style={{ width: '100%' }}>
-                        <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
-                    </ScrollView>
-                </View>
+                <>
+                    <View style={{ height: '85%', width: '100%', marginTop: 10 }}>
+                        <ScrollView style={{ width: '100%' }}>
+                            <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
+                        </ScrollView>
+                    </View>
+                    <Player item={item} />
+                </>
             }
         </Animated.View >
     );
