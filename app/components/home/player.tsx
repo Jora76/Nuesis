@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Button } from "react-native";
 import Slider from '@react-native-community/slider';
 
 import * as FileSystem from "expo-file-system";
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
+// import * as ExponentAV from "expo-av/build/AV";
 
 import usePlayer from "@/app/contexts/playerContext";
 
 interface PlayerProps {
     item: string;
-}
+} 
 
 export default function Player({ item }: PlayerProps) {
     const { loadRecordings } = usePlayer();
-    const [sound, setSound] = useState<Audio.Sound | null>(null);
+    const [soundState, setSoundState] = useState<Audio.Sound | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isSliderChanging, setIsSliderChanging] = useState(false);
     const [position, setPosition] = useState(0);
@@ -21,21 +22,24 @@ export default function Player({ item }: PlayerProps) {
 
     const playRecording = async (uri: string) => {
         const { sound } = await Audio.Sound.createAsync({ uri });
-        setSound(sound);
-        sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-        await sound.playAsync();
+        sound?.setOnPlaybackStatusUpdate((status) => onPlaybackStatusUpdate(status, sound));
+        await sound?.playAsync();
+        setSoundState(sound);
         setIsPlaying(true);
     };
-    const onPlaybackStatusUpdate = (status: any) => {
+
+    const onPlaybackStatusUpdate = async (status: any, sound: Audio.Sound) => {
         if (status.isLoaded) {
             setPosition(status.positionMillis);
             setDuration(status.durationMillis);
             if (status.didJustFinish) {
                 setIsPlaying(false);
-                sound?.stopAsync();
+                await sound?.unloadAsync();
+                console.log("Playback finished");
             }
         }
     };
+
     const deleteRecording = async (uri: string) => {
         try {
             await FileSystem.deleteAsync(uri);
@@ -45,10 +49,9 @@ export default function Player({ item }: PlayerProps) {
         }
     };
     const handleSliderChange = async (value: number) => {
-        if (sound && isSliderChanging) {
-            await sound.setPositionAsync(value);
-            await sound.playFromPositionAsync(value);
-            setIsPlaying(true);
+        if (soundState && isSliderChanging) {
+            await soundState?.setPositionAsync(value);
+            await soundState?.playFromPositionAsync(value);
         }
     };
     return (
