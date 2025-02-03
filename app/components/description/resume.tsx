@@ -1,25 +1,38 @@
 import { useEffect, useState, useRef } from "react";
-import { useThemeColor } from "@/app/hooks/useThemeColor";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+// import AppLoading from 'expo-app-loading';
 
-export default function Resume({ item, index, scrollRef }: { item: any, index: number,  scrollRef: React.RefObject<FlatList> }) {
+import { useThemeColor } from "@/app/hooks/useThemeColor";
+
+export default function Resume({ item, index, scrollRef }: { item: any, index: number, scrollRef: React.RefObject<FlatList> }) {
     const [itemState, setItemState] = useState(0);
+
     const heightAnim = useRef(new Animated.Value(40)).current; // Valeur animée pour la hauteur
     const minWidthAnim = useRef(new Animated.Value(0)).current; // Valeur animée pour la largeur
 
+    // let [fontsLoaded] = useFonts({
+    //     Montserrat_400Regular,
+    //     Montserrat_700Bold,
+    // });
+
+    // if (!fontsLoaded) {
+    //     return <AppLoading />;
+    // }
+
     useEffect(() => {
-        // scrollRef.current?.scrollToIndex({ animated: true, index });
         const timeoutId = setTimeout(() => {
             scrollRef.current?.scrollToIndex({ animated: true, index });
-          }, 100);
+            return () => clearTimeout(timeoutId);
+        }, 100);
+
         let toHeightValue;
         if (itemState === 0) {
             toHeightValue = 40;
         } else if (itemState === 1) {
             toHeightValue = 250;
         } else {
-            // Calculez la hauteur relative en pixels
             const screenHeight = Dimensions.get("window").height;
             toHeightValue = screenHeight * 0.9;
         }
@@ -34,14 +47,14 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
 
         Animated.timing(heightAnim, {
             toValue: toHeightValue,
-            duration: 200, // Durée de l'animation en millisecondes
-            useNativeDriver: false, // Désactiver l'utilisation du pilote natif pour les animations de mise en page
+            duration: 200,
+            useNativeDriver: false,
         }).start();
 
         Animated.timing(minWidthAnim, {
             toValue: toWidthValue,
-            duration: 200, // Durée de l'animation en millisecondes
-            useNativeDriver: false, // Désactiver l'utilisation du pilote natif pour les animations de mise en page
+            duration: 200,
+            useNativeDriver: false,
         }).start();
     }, [itemState, heightAnim, minWidthAnim]);
 
@@ -59,11 +72,18 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
             borderColor: useThemeColor({}, 'icon'),
             borderWidth: 1,
         },
-        text: {
-            fontSize: 18,
+        title: {
+            fontSize: 19,
             marginLeft: 8,
             fontWeight: 'bold',
             color: useThemeColor({}, 'text'),
+            fontFamily: 'Montserrat_700Bold',
+        },
+        text: {
+            fontSize: 16,
+            marginLeft: 8,
+            color: useThemeColor({}, 'text'),
+            fontFamily: 'Montserrat_400Regular',
         },
     });
 
@@ -73,10 +93,17 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
     };
 
     return (
-        <Animated.View style={[styles.container, { height: heightAnim, minWidth: minWidthAnim }]}>
+        <Animated.View style={[styles.container, { height: heightAnim, minWidth: minWidthAnim, maxWidth: minWidthAnim }]}>
             <TouchableOpacity onPress={handlePress}>
-                <Text style={styles.text}>RESUME 1</Text>
+                <Text style={styles.title}>RESUME 1</Text>
             </TouchableOpacity>
+            {itemState > 0 &&
+                <View style={{ height: '85%', width: '100%', marginTop: 10 }}>
+                    <ScrollView style={{ width: '100%' }}>
+                        <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
+                    </ScrollView>
+                </View>
+            }
         </Animated.View >
     );
 }
