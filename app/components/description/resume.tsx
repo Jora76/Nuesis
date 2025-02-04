@@ -139,7 +139,7 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
                     {itemState > 1 &&
                         <>
                             <Player item={item} />
-                            <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
+                            {/* <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} /> */}
                         </>
                     }
                 </>

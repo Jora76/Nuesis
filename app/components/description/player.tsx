@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Button, Pressable } from "react-native";
+import { View, Button, Pressable, StyleSheet } from "react-native";
 import Slider from '@react-native-community/slider';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 
-import usePlayer from "@/app/contexts/playerContext";
 import { useThemeColor } from "@/app/hooks/useThemeColor";
 
 // États locaux :
@@ -29,18 +28,12 @@ import { useThemeColor } from "@/app/hooks/useThemeColor";
 // Affiche un bouton de lecture/pause.
 // Affiche un curseur pour contrôler la position de la lecture.
 // Affiche un bouton pour supprimer l'enregistrement.
-// Le composant utilise des éléments de l'interface utilisateur comme View, Pressable, Slider et Button pour permettre l'interaction avec l'utilisateur.
-
-//TODO:
-
-// Terminer le style de la barre de lecture.
 
 interface PlayerProps {
     item: string;
 }
 
 export default function Player({ item }: PlayerProps) {
-    const { loadRecordings } = usePlayer();
     const [soundState, setSoundState] = useState<Audio.Sound | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isSliderChanging, setIsSliderChanging] = useState(false);
@@ -79,20 +72,48 @@ export default function Player({ item }: PlayerProps) {
             await soundState?.setPositionAsync(value);
         }
     };
+
+    const sliderStyle = StyleSheet.create({
+        sliderDummy: {
+            backgroundColor: useThemeColor({}, "icon"),
+            width: 260,
+            height: 10,
+            borderRadius: 50,
+            position: 'absolute',
+        },
+        sliderReal: {
+            backgroundColor: useThemeColor({}, "tint"),
+            width: (position / duration) * 260,
+            borderBottomLeftRadius: 50,
+            borderTopLeftRadius: 50,
+            height: 10,
+        }
+    });
+
     return (
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '50%' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', padding: 10, alignItems: 'center', flex: 1 }}>
             <Pressable onPress={() => isPlaying ? pauseRecording() : playRecording(`${FileSystem.documentDirectory}${item}`)}>
-                <MaterialIcons size={28} name={isPlaying ? "pause" : "play-arrow"} color={useThemeColor({}, "text")} />
+                <MaterialIcons size={20} name={isPlaying ? "pause" : "play-arrow"} color={useThemeColor({}, "text")} />
             </Pressable>
-            <Slider
-                style={{ width: '80%' }}
-                minimumValue={0}
-                maximumValue={duration}
-                value={position}
-                onTouchStart={() => setIsSliderChanging(true)}
-                onTouchEnd={() => setIsSliderChanging(false)}
-                onValueChange={handleSliderChange}
-            />
+            <View style={{ borderRadius: 50 }}>
+                <View style={{ flexDirection: 'row', position: 'absolute' }}>
+                    <View style={sliderStyle.sliderDummy}></View>
+                    <View style={sliderStyle.sliderReal}></View>
+                </View>
+                <Slider
+                    style={{width: 260, height: 10, borderRadius: 50}}
+                    minimumValue={0}
+                    maximumValue={duration}
+                    value={position}
+                    step={1}
+                    onTouchStart={() => setIsSliderChanging(true)}
+                    onTouchEnd={() => setIsSliderChanging(false)}
+                    onValueChange={handleSliderChange}
+                    maximumTrackTintColor="transparent"
+                    minimumTrackTintColor="transparent"
+                    thumbTintColor="transparent"
+                />
+            </View>
         </View>
     )
 }
