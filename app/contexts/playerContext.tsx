@@ -1,6 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 
+// Contexte pour gérer les enregistrements audio.
+// Permet de charger, envoyer et supprimer des enregistrements audio.
+// Utilisé dans les composants Recorder, Description et Player.
+
+// Propriétés du contexte :
+// recordings : Liste des enregistrements audio.
+// sendRecording : Fonction pour envoyer un enregistrement audio en base 64.
+// deleteRecording : Fonction pour supprimer un enregistrement audio.
+// loadRecordings : Fonction pour charger les enregistrements audio.
+
 interface PlayerContextProps {
     recordings: string[];
     sendRecording?: (uri: string) => void;
@@ -54,7 +64,6 @@ export function PlayerProvider({ children }: any) {
             encoding: FileSystem.EncodingType.Base64,
         });
         const base64WithMime = `data:${mimeType};base64,${base64}`;
-        // setBase64Recording(base64WithMime);
         console.log("Recording converted to base64", base64WithMime);
 
         // Send the recording to the API

@@ -7,6 +7,11 @@ import Recorder from "../components/home/recorder";
 
 import { useThemeColor } from "../hooks/useThemeColor";
 
+// Rendu du composant :
+
+// Affiche la page d'accueil de l'application.
+// Affiche un composant Dropdown pour sélectionner la langue de la transcription.
+// Affiche un composant Recorder pour enregistrer un message audio.
 
 export default function Index() {
   return (
@@ -29,6 +34,7 @@ export default function Index() {
   );
 }
 
+// Svg pour le titre.
 
 const SvgComponent = (props: SvgProps) => (
   <Svg

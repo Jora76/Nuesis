@@ -1,16 +1,42 @@
-import { useEffect, useState, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated, Button } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 
+import * as FileSystem from "expo-file-system";
+
 import { useThemeColor } from "@/app/hooks/useThemeColor";
-import Player from "../home/player";
-import React from "react";
+import Player from "./player";
+import usePlayer from "@/app/contexts/playerContext";
+
+// Rendu du composant :
+
+// Affiche un résumé d'un enregistrement audio.
+
+// Fonctions principales :
+
+// useEffect : Met à jour et anime la hauteur et la largeur du composant en fonction de l'état de l'élément. (0 = base, 1 = semi-développé, 2 = totalement développé) 
+// styleSheet : Feuille de styles en français. Regroupe tous les styles css du composant.
+// handlePress : Gère le clic sur le composant et change l'état de l'élément.
+// deleteRecording : Supprime l'enregistrement et recharge la liste des enregistrements.
+
+// TODO : 
+
+// Ajouter une icône de suppression pour l'enregistrement.
+// Implémenter les vrais textes pour les résumés.
+// Ajouter des points de pagination, pour swiper entre la transcription et le résumé. (Voir Enzo pour les détails du style)
+
+// Bugs:
+
+// Si il y a une liste assez longue de transcriptions, certaines transcriptions peuvent ne pas se dérouler. Il faut scroll de nouveau pour faire en sorte que ça refonctionne.
+// La font ne s'affiche pas correctement tout le temps.
 
 export default function Resume({ item, index, scrollRef }: { item: any, index: number, scrollRef: React.RefObject<FlatList> }) {
     const [itemState, setItemState] = useState(0);
 
     const heightAnim = useRef(new Animated.Value(40)).current; // Valeur animée pour la hauteur
     const minWidthAnim = useRef(new Animated.Value(0)).current; // Valeur animée pour la largeur
+
+    const {loadRecordings} = usePlayer();
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -63,6 +89,7 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
             borderColor: useThemeColor({}, 'icon'),
             borderWidth: 1,
         },
+        // Suivre le figma pour le style de la page.
         title: {
             fontSize: 19,
             marginLeft: 8,
@@ -83,6 +110,15 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
         console.log("Pressed on", item, "state : ", itemState);
     };
 
+    const deleteRecording = async (uri: string) => {
+        try {
+            await FileSystem.deleteAsync(uri);
+            loadRecordings(); // Reload recordings after deletion
+        } catch (error) {
+            console.error("Failed to delete recording", error);
+        }
+    };
+
     return (
         <Animated.View style={[styles.container, { height: heightAnim, minWidth: minWidthAnim, maxWidth: minWidthAnim }]}>
             <TouchableOpacity onPress={handlePress}>
@@ -91,11 +127,21 @@ export default function Resume({ item, index, scrollRef }: { item: any, index: n
             {itemState > 0 &&
                 <>
                     <View style={{ height: '85%', width: '100%', marginTop: 10 }}>
-                        <ScrollView style={{ width: '100%' }}>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
-                        </ScrollView>
+                        {
+                            itemState > 1 ?
+                                <ScrollView style={{ width: '100%' }}>
+                                    <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel liberoLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
+                                </ScrollView>
+                                : <Text style={styles.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet ante vel libero</Text>
+                        }
+
                     </View>
-                    <Player item={item} />
+                    {itemState > 1 &&
+                        <>
+                            <Player item={item} />
+                            <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
+                        </>
+                    }
                 </>
             }
         </Animated.View >

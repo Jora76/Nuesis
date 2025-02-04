@@ -1,12 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { View, Button } from "react-native";
+import { View, Button, Pressable } from "react-native";
 import Slider from '@react-native-community/slider';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
-// import * as ExponentAV from "expo-av/build/AV";
 
 import usePlayer from "@/app/contexts/playerContext";
+import { useThemeColor } from "@/app/hooks/useThemeColor";
+
+// États locaux :
+
+// soundState : Stocke l'état du son en cours de lecture.
+// isPlaying : Indique si un enregistrement est en cours de lecture.
+// isSliderChanging : Indique si l'utilisateur est en train de changer la position du curseur.
+// position : Position actuelle de la lecture (en millisecondes).
+// duration : Durée totale de l'enregistrement (en millisecondes).
+
+// Fonctions principales :
+
+// playRecording : Joue un enregistrement à partir d'une URI donnée.
+// pauseRecording : Met en pause l'enregistrement en cours.
+// onPlaybackStatusUpdate : Met à jour l'état de la lecture (position, durée) et gère la fin de la lecture.
+// handleSliderChange : Met à jour la position de la lecture lorsque l'utilisateur change la position du curseur.
+
+// Rendu du composant :
+
+// Affiche un bouton de lecture/pause.
+// Affiche un curseur pour contrôler la position de la lecture.
+// Affiche un bouton pour supprimer l'enregistrement.
+// Le composant utilise des éléments de l'interface utilisateur comme View, Pressable, Slider et Button pour permettre l'interaction avec l'utilisateur.
+
+//TODO:
+
+// Terminer le style de la barre de lecture.
 
 interface PlayerProps {
     item: string;
@@ -47,14 +74,6 @@ export default function Player({ item }: PlayerProps) {
         }
     };
 
-    const deleteRecording = async (uri: string) => {
-        try {
-            await FileSystem.deleteAsync(uri);
-            loadRecordings(); // Reload recordings after deletion
-        } catch (error) {
-            console.error("Failed to delete recording", error);
-        }
-    };
     const handleSliderChange = async (value: number) => {
         if (soundState && isSliderChanging) {
             await soundState?.setPositionAsync(value);
@@ -62,6 +81,9 @@ export default function Player({ item }: PlayerProps) {
     };
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '50%' }}>
+            <Pressable onPress={() => isPlaying ? pauseRecording() : playRecording(`${FileSystem.documentDirectory}${item}`)}>
+                <MaterialIcons size={28} name={isPlaying ? "pause" : "play-arrow"} color={useThemeColor({}, "text")} />
+            </Pressable>
             <Slider
                 style={{ width: '80%' }}
                 minimumValue={0}
@@ -71,8 +93,6 @@ export default function Player({ item }: PlayerProps) {
                 onTouchEnd={() => setIsSliderChanging(false)}
                 onValueChange={handleSliderChange}
             />
-            <Button title="Play" onPress={() => isPlaying ? pauseRecording() : playRecording(`${FileSystem.documentDirectory}${item}`)} />
-            <Button title="Delete" onPress={() => deleteRecording(`${FileSystem.documentDirectory}${item}`)} />
         </View>
     )
 }

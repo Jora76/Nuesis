@@ -1,24 +1,27 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, useColorScheme } from 'react-native';
-import { Colors } from '@/app/constants/Colors';
+import { Platform } from 'react-native';
+
+import { Tabs } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-export default function TabLayout() {
-    const colorScheme = useColorScheme();
+import { useThemeColor } from '../hooks/useThemeColor';
 
+// Ce composant définit la barre de navigation de l'application.
+// Il utilise le composant Tabs pour afficher les onglets de navigation.
+// Chaque onglet est associé à un écran de l'application.
+
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: useThemeColor({}, 'tint'),
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
           default: {
-            backgroundColor: Colors[colorScheme ?? 'light'].tabIconDefault,
+            backgroundColor: useThemeColor({}, 'tabIconDefault'),
             position: 'absolute',
             borderRadius: 50,
             borderTopWidth: 0,

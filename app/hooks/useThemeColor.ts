@@ -1,10 +1,8 @@
-/**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
- */
-
 import { Colors } from '@/app/constants/Colors';
 import { useColorScheme } from 'react-native';
+
+// Récupère la couleur du thème actuel.
+// Reprend tot ce qui est dans Colors et le met dans un tableau.
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
